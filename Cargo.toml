@@ -1,0 +1,34 @@
+[package]
+name = "RangerPOS"
+version = "0.1.0"
+authors = ["Cooper Dandilly <support@salty.cool>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# GUI library for creating the interface
+iced = "0.3"
+
+# Serialization and deserialization library (for JSON files)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Password hashing and encryption (for user authentication)
+bcrypt = "0.10"
+
+# For working with async tasks (e.g., if needed for background tasks like order processing)
+tokio = { version = "1", features = ["full"] }
+
+# For managing error handling
+anyhow = "1.0"
+
+# Optional: For logging and debugging (helpful for development)
+log = "0.4"
+env_logger = "0.9"
+
+# For making HTTP requests, e.g., if you want to add remote API support later (optional)
+reqwest = { version = "0.11", features = ["json"] }
+
+# For filesystem access and working with files (for saving/loading JSONs, logs, etc.)
+tokio = { version = "1", features = ["fs"] }

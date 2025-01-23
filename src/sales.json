@@ -1,0 +1,5 @@
+{
+    "sales": [
+        {"order_id": 1, "total": 7.50, "date": "2025-01-23", "employee": "John Doe"}
+    ]
+}
