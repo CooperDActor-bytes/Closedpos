@@ -1,69 +1,35 @@
-use iced::{
-    button, Column, Container, Element, Length, Text, TextInput, Button, Align,
-};
+use iced::{button, text_input, Button, Column, Container, Element, Length, Sandbox, Text, TextInput};
 
-#[derive(Default)]
-pub struct Settings {
-    tax_rate_input: TextInput<String>,
+pub struct Settings<'a> {
+    tax_rate_input: TextInput<'a, String>,
     save_button: button::State,
 }
 
-#[derive(Debug, Clone)]
-pub enum Message {
-    SetTaxRate(String),
-    SaveSettings,
-}
-
-impl Sandbox for Settings {
-    type Message = Message;
+impl<'a> Sandbox for Settings<'a> {
+    type Message = ();
 
     fn new() -> Self {
-        Self::default()
+        Settings {
+            tax_rate_input: TextInput::new("Tax Rate"),
+            save_button: button::State::new(),
+        }
     }
 
     fn title(&self) -> String {
         String::from("Settings")
     }
 
-    fn update(&mut self, message: Message) {
-        match message {
-            Message::SetTaxRate(rate) => {
-                // Set the tax rate
-            }
-            Message::SaveSettings => {
-                // Save settings
-            }
-        }
-    }
+    fn update(&mut self, _message: Self::Message) {}
 
-    fn view(&mut self) -> Element<Message> {
-        let tax_rate_input = TextInput::new(
-            &mut self.tax_rate_input,
-            "Tax Rate (%)",
-            "",
-            Message::SetTaxRate,
-        )
-        .padding(10)
-        .size(30);
-
-        let save_button = Button::new(
-            &mut self.save_button,
-            Text::new("Save Settings"),
-        )
-        .on_press(Message::SaveSettings)
-        .padding(15);
-
+    fn view(&self) -> Element<Self::Message> {
         let content = Column::new()
-            .align_items(Align::Center)
-            .spacing(20)
             .push(Text::new("Settings"))
-            .push(tax_rate_input)
-            .push(save_button);
+            .push(TextInput::new("Tax Rate"))
+            .push(Button::new(&mut self.save_button, Text::new("Save")));
 
         Container::new(content)
             .width(Length::Fill)
             .height(Length::Fill)
-            .padding(20)
             .center_x()
             .center_y()
             .into()

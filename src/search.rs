@@ -1,31 +1,19 @@
-use iced::{
-    button, Column, Container, Element, Length, Row, Text, TextInput, Button, Align,
-};
-use iced::widget::pick_list;
-use serde::{Deserialize, Serialize};
+use iced::{button, text_input, Button, Column, Container, Element, Length, Sandbox, Text, TextInput};
 
-#[derive(Default)]
-pub struct SearchOrders {
-    order_id_input: TextInput<String>,
-    employee_name_input: TextInput<String>,
+pub struct SearchOrders<'a> {
+    order_id_input: TextInput<'a, String>,
+    employee_name_input: TextInput<'a, String>,
     search_button: button::State,
-    search_results: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
-pub enum Message {
-    Search,
-    SetOrderId(String),
-    SetEmployeeName(String),
-}
-
-impl Sandbox for SearchOrders {
-    type Message = Message;
+impl<'a> Sandbox for SearchOrders<'a> {
+    type Message = ();
 
     fn new() -> Self {
-        Self {
-            search_results: vec![],
-            ..Self::default()
+        SearchOrders {
+            order_id_input: TextInput::new("Order ID"),
+            employee_name_input: TextInput::new("Employee Name"),
+            search_button: button::State::new(),
         }
     }
 
@@ -33,66 +21,18 @@ impl Sandbox for SearchOrders {
         String::from("Search Orders")
     }
 
-    fn update(&mut self, message: Message) {
-        match message {
-            Message::Search => {
-                // Perform search based on input fields (order ID or employee name)
-                self.search_results.push(String::from("Order #123 - Completed"));
-                self.search_results.push(String::from("Order #456 - Completed"));
-            }
-            Message::SetOrderId(order_id) => {
-                // Update order ID input field
-            }
-            Message::SetEmployeeName(employee_name) => {
-                // Update employee name input field
-            }
-        }
-    }
+    fn update(&mut self, _message: Self::Message) {}
 
-    fn view(&mut self) -> Element<Message> {
-        let order_id_input = TextInput::new(
-            &mut self.order_id_input,
-            "Enter Order ID",
-            "",
-            Message::SetOrderId,
-        )
-        .padding(10)
-        .size(30);
-
-        let employee_name_input = TextInput::new(
-            &mut self.employee_name_input,
-            "Enter Employee Name",
-            "",
-            Message::SetEmployeeName,
-        )
-        .padding(10)
-        .size(30);
-
-        let search_button = Button::new(
-            &mut self.search_button,
-            Text::new("Search"),
-        )
-        .on_press(Message::Search)
-        .padding(15);
-
-        let result_list = Column::new()
-            .spacing(10)
-            .push(Text::new("Search Results"))
-            .push(Text::new(self.search_results.join("\n")));
-
+    fn view(&self) -> Element<Self::Message> {
         let content = Column::new()
-            .align_items(Align::Center)
-            .spacing(20)
             .push(Text::new("Search Orders"))
-            .push(order_id_input)
-            .push(employee_name_input)
-            .push(search_button)
-            .push(result_list);
+            .push(TextInput::new("Order ID"))
+            .push(TextInput::new("Employee Name"))
+            .push(Button::new(&mut self.search_button, Text::new("Search")));
 
         Container::new(content)
             .width(Length::Fill)
             .height(Length::Fill)
-            .padding(20)
             .center_x()
             .center_y()
             .into()
