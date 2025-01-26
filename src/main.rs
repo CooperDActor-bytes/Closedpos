@@ -4,7 +4,7 @@ mod inventory;
 mod reports;
 mod settings;
 
-use iced::{Application, Settings};
+use iced::{Application, Command, Element, Settings, Theme, Text};
 
 fn main() -> iced::Result {
     RangerPOS::run(Settings::default())
@@ -15,22 +15,22 @@ struct RangerPOS;
 impl Application for RangerPOS {
     type Executor = iced::executor::Default;
     type Message = ();
-    type Theme = iced::Theme;
+    type Theme = Theme;
     type Flags = ();
 
-    fn new(_flags: Self::Flags) -> (Self, iced::Command<Self::Message>) {
-        (RangerPOS, iced::Command::none())
+    fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
+        (RangerPOS, Command::none())
     }
 
     fn title(&self) -> String {
-        String::from("Ranger POS")
+        "Ranger POS".to_string()
     }
 
-    fn update(&mut self, _message: Self::Message) -> iced::Command<Self::Message> {
-        iced::Command::none()
+    fn update(&mut self, _message: Self::Message) -> Command<Self::Message> {
+        Command::none()
     }
 
-    fn view(&self) -> iced::Element<Self::Message> {
-        iced::Text::new("Welcome to Ranger POS!").into()
+    fn view(&self) -> Element<Self::Message> {
+        Text::new("Welcome to Ranger POS!").size(40).into()
     }
 }
