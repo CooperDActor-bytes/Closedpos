@@ -1,24 +1,34 @@
-use iced::{
-    button, text_input, Button, Column, Container, Element, Length, Sandbox, Text, TextInput,
-};
+use iced::{Element, Sandbox, Settings, widget::{button, column, container, text_input, text}};
+use serde::{Deserialize, Serialize};
+use std::fs;
 
-pub struct Orders<'a> {
-    item_picker: iced::widget::pick_list::State<String>,
-    quantity_input: text_input::State,
-    add_button: button::State,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Order {
+    id: String,
+    item: String,
+    quantity: u32,
+}
+
+#[derive(Default)]
+struct Orders {
+    order_id: String,
+    item_name: String,
     quantity: String,
 }
 
-impl<'a> Sandbox for Orders<'a> {
+#[derive(Debug, Clone)]
+pub enum Message {
+    OrderIdChanged(String),
+    ItemChanged(String),
+    QuantityChanged(String),
+    SubmitOrder,
+}
+
+impl Sandbox for Orders {
     type Message = Message;
 
     fn new() -> Self {
-        Orders {
-            item_picker: iced::widget::pick_list::State::default(),
-            quantity_input: text_input::State::new(),
-            add_button: button::State::new(),
-            quantity: String::new(),
-        }
+        Orders::default()
     }
 
     fn title(&self) -> String {
@@ -27,40 +37,40 @@ impl<'a> Sandbox for Orders<'a> {
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::QuantityChanged(value) => {
-                self.quantity = value;
-            }
-            Message::AddButtonPressed => {
-                println!("Adding item with quantity: {}", self.quantity);
+            Message::OrderIdChanged(id) => self.order_id = id,
+            Message::ItemChanged(item) => self.item_name = item,
+            Message::QuantityChanged(qty) => self.quantity = qty,
+            Message::SubmitOrder => {
+                let order = Order {
+                    id: self.order_id.clone(),
+                    item: self.item_name.clone(),
+                    quantity: self.quantity.parse().unwrap_or(1),
+                };
+                save_order(order);
             }
         }
     }
 
-    fn view(&self) -> Element<Self::Message> {
-        let content = Column::new()
-            .push(Text::new("Orders").size(30))
-            .push(TextInput::new(
-                &self.quantity_input,
-                "Enter quantity...",
-                &self.quantity,
-                Message::QuantityChanged,
-            ))
-            .push(
-                Button::new(&self.add_button, Text::new("Add"))
-                    .on_press(Message::AddButtonPressed),
-            );
-
-        Container::new(content)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .center_x()
-            .center_y()
-            .into()
+    fn view(&self) -> Element<Message> {
+        let content = column![
+            text_input("Order ID", &self.order_id)
+                .on_input(Message::OrderIdChanged),
+            text_input("Item", &self.item_name)
+                .on_input(Message::ItemChanged),
+            text_input("Quantity", &self.quantity)
+                .on_input(Message::QuantityChanged),
+            button("Submit Order").on_press(Message::SubmitOrder),
+        ];
+        container(content).into()
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum Message {
-    QuantityChanged(String),
-    AddButtonPressed,
+fn save_order(order: Order) {
+    let file_path = "data/orders.json";
+    let mut orders: Vec<Order> = match fs::read_to_string(file_path) {
+        Ok(contents) => serde_json::from_str(&contents).unwrap_or_default(),
+        Err(_) => vec![],
+    };
+    orders.push(order);
+    fs::write(file_path, serde_json::to_string(&orders).unwrap()).unwrap();
 }

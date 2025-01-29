@@ -1,82 +1,56 @@
-use iced::{
-    button, Column, Container, Element, Length, Text, Button, Align,
-};
+use iced::{Element, Sandbox, widget::{button, column, container, text}};
+use serde::Deserialize;
+use std::fs;
+
+#[derive(Debug, Clone, Deserialize)]
+struct Order {
+    id: String,
+    item: String,
+    quantity: u32,
+}
 
 #[derive(Default)]
-pub struct Reports {
-    daily_button: button::State,
-    weekly_button: button::State,
-    monthly_button: button::State,
+struct Reports {
+    report_text: String,
 }
 
 #[derive(Debug, Clone)]
 pub enum Message {
-    GenerateDailyReport,
-    GenerateWeeklyReport,
-    GenerateMonthlyReport,
+    GenerateReport,
 }
 
 impl Sandbox for Reports {
     type Message = Message;
 
     fn new() -> Self {
-        Self::default()
-    }
-
-    fn title(&self) -> String {
-        String::from("Sales Reports")
+        Reports::default()
     }
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::GenerateDailyReport => {
-                // Generate daily report
-            }
-            Message::GenerateWeeklyReport => {
-                // Generate weekly report
-            }
-            Message::GenerateMonthlyReport => {
-                // Generate monthly report
+            Message::GenerateReport => {
+                self.report_text = generate_report();
             }
         }
     }
 
-    fn view(&mut self) -> Element<Message> {
-        let daily_button = Button::new(
-            &mut self.daily_button,
-            Text::new("Daily Report"),
-        )
-        .on_press(Message::GenerateDailyReport)
-        .padding(15);
-
-        let weekly_button = Button::new(
-            &mut self.weekly_button,
-            Text::new("Weekly Report"),
-        )
-        .on_press(Message::GenerateWeeklyReport)
-        .padding(15);
-
-        let monthly_button = Button::new(
-            &mut self.monthly_button,
-            Text::new("Monthly Report"),
-        )
-        .on_press(Message::GenerateMonthlyReport)
-        .padding(15);
-
-        let content = Column::new()
-            .align_items(Align::Center)
-            .spacing(20)
-            .push(Text::new("Sales Reports"))
-            .push(daily_button)
-            .push(weekly_button)
-            .push(monthly_button);
-
-        Container::new(content)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .padding(20)
-            .center_x()
-            .center_y()
-            .into()
+    fn view(&self) -> Element<Message> {
+        let content = column![
+            button("Generate Report").on_press(Message::GenerateReport),
+            text(&self.report_text)
+        ];
+        container(content).into()
     }
+}
+
+fn generate_report() -> String {
+    let file_path = "data/orders.json";
+    let contents = fs::read_to_string(file_path).ok()?;
+    let orders: Vec<Order> = serde_json::from_str(&contents).ok()?;
+    
+    let total_orders = orders.len();
+    let total_items: u32 = orders.iter().map(|o| o.quantity).sum();
+
+    Some(format!("Total Orders: {}\nTotal Items Sold: {}", total_orders, total_items))
+        .unwrap_or_else(|| "No data available".to_string())
 }

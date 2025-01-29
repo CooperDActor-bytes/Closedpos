@@ -1,81 +1,61 @@
-use iced::{
-    button, text_input, Button, Column, Container, Element, Length, Sandbox, Text, TextInput,
-};
+use iced::{Element, Sandbox, widget::{button, column, container, text_input, text}};
+use serde::Deserialize;
+use std::fs;
 
-pub struct SearchOrders<'a> {
-    order_id_input: text_input::State,
-    employee_name_input: text_input::State,
-    search_button: button::State,
-    order_id: String,
-    employee_name: String,
+#[derive(Debug, Clone, Deserialize)]
+struct Order {
+    id: String,
+    item: String,
+    quantity: u32,
 }
 
-impl<'a> Sandbox for SearchOrders<'a> {
-    type Message = Message;
-
-    fn new() -> Self {
-        SearchOrders {
-            order_id_input: text_input::State::new(),
-            employee_name_input: text_input::State::new(),
-            search_button: button::State::new(),
-            order_id: String::new(),
-            employee_name: String::new(),
-        }
-    }
-
-    fn title(&self) -> String {
-        "Search Orders".to_string()
-    }
-
-    fn update(&mut self, message: Message) {
-        match message {
-            Message::OrderIdChanged(value) => {
-                self.order_id = value;
-            }
-            Message::EmployeeNameChanged(value) => {
-                self.employee_name = value;
-            }
-            Message::SearchButtonPressed => {
-                println!(
-                    "Searching for Order ID: {}, Employee Name: {}",
-                    self.order_id, self.employee_name
-                );
-            }
-        }
-    }
-
-    fn view(&self) -> Element<Self::Message> {
-        let content = Column::new()
-            .push(Text::new("Search Orders").size(30))
-            .push(TextInput::new(
-                &self.order_id_input,
-                "Order ID...",
-                &self.order_id,
-                Message::OrderIdChanged,
-            ))
-            .push(TextInput::new(
-                &self.employee_name_input,
-                "Employee Name...",
-                &self.employee_name,
-                Message::EmployeeNameChanged,
-            ))
-            .push(
-                Button::new(&self.search_button, Text::new("Search"))
-                    .on_press(Message::SearchButtonPressed),
-            );
-
-        Container::new(content)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .center_x()
-            .center_y()
-            .into()
-    }
+#[derive(Default)]
+struct SearchOrders {
+    search_id: String,
+    result: Option<Order>,
 }
 
 #[derive(Debug, Clone)]
 pub enum Message {
-    OrderIdChanged(String),
-    EmployeeNameChanged(String),
-    SearchButtonPressed,
+    SearchIdChanged(String),
+    Search,
+}
+
+impl Sandbox for SearchOrders {
+    type Message = Message;
+
+    fn new() -> Self {
+        SearchOrders::default()
+    }
+
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::SearchIdChanged(id) => self.search_id = id,
+            Message::Search => {
+                self.result = find_order(&self.search_id);
+            }
+        }
+    }
+
+    fn view(&self) -> Element<Message> {
+        let content = column![
+            text_input("Search Order ID", &self.search_id)
+                .on_input(Message::SearchIdChanged),
+            button("Search").on_press(Message::Search),
+            match &self.result {
+                Some(order) => text(format!(
+                    "Order found: {} - {}x {}",
+                    order.id, order.quantity, order.item
+                )),
+                None => text("No results found."),            }
+        ];
+        container(content).into()
+    }
+}
+
+fn find_order(search_id: &str) -> Option<Order> {
+    let file_path = "data/orders.json";
+    let contents = fs::read_to_string(file_path).ok()?;
+    let orders: Vec<Order> = serde_json::from_str(&contents).ok()?;
+    orders.into_iter().find(|order| order.id == search_id)
 }
