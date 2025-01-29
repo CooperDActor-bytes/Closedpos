@@ -1,53 +1,21 @@
-use iced::{Element, Sandbox, widget::{button, column, container, text_input, text}};
-use serde::{Deserialize, Serialize};
-use std::fs;
+use iced::{Element, Sandbox, Text};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct SettingsData {
-    tax_rate: f32,
-}
-
-#[derive(Default)]
-struct Settings {
-    tax_rate: String,
-}
-
-#[derive(Debug, Clone)]
-pub enum Message {
-    TaxRateChanged(String),
-    SaveSettings,
-}
+pub struct Settings;
 
 impl Sandbox for Settings {
-    type Message = Message;
+    type Message = ();
 
     fn new() -> Self {
-        Settings::default()
+        Settings
     }
 
-    fn update(&mut self, message: Message) {
-        match message {
-            Message::TaxRateChanged(rate) => self.tax_rate = rate,
-            Message::SaveSettings => {
-                let settings = SettingsData {
-                    tax_rate: self.tax_rate.parse().unwrap_or(0.0),
-                };
-                save_settings(settings);
-            }
-        }
+    fn title(&self) -> String {
+        "Settings".to_string()
     }
 
-    fn view(&self) -> Element<Message> {
-        let content = column![
-            text_input("Tax Rate (%)", &self.tax_rate)
-                .on_input(Message::TaxRateChanged),
-            button("Save").on_press(Message::SaveSettings),
-        ];
-        container(content).into()
-    }
-}
+    fn update(&mut self, _message: Self::Message) {}
 
-fn save_settings(settings: SettingsData) {
-    let file_path = "data/settings.json";
-    fs::write(file_path, serde_json::to_string(&settings).unwrap()).unwrap();
+    fn view(&self) -> Element<Self::Message> {
+        Text::new("This is the Settings View").into()
+    }
 }
