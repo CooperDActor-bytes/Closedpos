@@ -1,4 +1,5 @@
-use iced::{button, Button, Column, Container, Element, Length, Sandbox, Text};
+use iced::widget::{Button, Column, Container, Text};
+use iced::{Element, Command};
 
 #[derive(Debug, Clone)]
 pub enum Message {
@@ -10,32 +11,33 @@ pub enum Message {
 }
 
 pub struct MainMenu {
-    orders_button: button::State,
-    search_button: button::State,
-    inventory_button: button::State,
-    reports_button: button::State,
-    settings_button: button::State,
+    orders_button: iced::widget::button::State,
+    search_button: iced::widget::button::State,
+    inventory_button: iced::widget::button::State,
+    reports_button: iced::widget::button::State,
+    settings_button: iced::widget::button::State,
 }
 
 impl MainMenu {
     pub fn new() -> Self {
         Self {
-            orders_button: button::State::new(),
-            search_button: button::State::new(),
-            inventory_button: button::State::new(),
-            reports_button: button::State::new(),
-            settings_button: button::State::new(),
+            orders_button: iced::widget::button::State::new(),
+            search_button: iced::widget::button::State::new(),
+            inventory_button: iced::widget::button::State::new(),
+            reports_button: iced::widget::button::State::new(),
+            settings_button: iced::widget::button::State::new(),
         }
     }
 
-    pub fn update(&mut self, message: Message) {
+    pub fn update(&mut self, message: Message) -> Command<Message> {
         match message {
-            Message::Orders => println!("Orders selected"),
-            Message::Search => println!("Search selected"),
-            Message::Inventory => println!("Inventory selected"),
-            Message::Reports => println!("Reports selected"),
-            Message::Settings => println!("Settings selected"),
+            Message::Orders => println!("Navigating to Orders"),
+            Message::Search => println!("Navigating to Search"),
+            Message::Inventory => println!("Navigating to Inventory"),
+            Message::Reports => println!("Navigating to Reports"),
+            Message::Settings => println!("Navigating to Settings"),
         }
+        Command::none()
     }
 
     pub fn view(&self) -> Element<Message> {

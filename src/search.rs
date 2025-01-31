@@ -1,4 +1,5 @@
-use iced::{Column, Element, Sandbox, Text};
+use iced::widget::{Column, Text};
+use iced::{Element, Sandbox};
 
 pub struct Search;
 
@@ -10,14 +11,14 @@ impl Sandbox for Search {
     }
 
     fn title(&self) -> String {
-        String::from("Search Orders")
+        String::from("Search")
     }
 
     fn update(&mut self, _message: Self::Message) {}
 
     fn view(&self) -> Element<Self::Message> {
         Column::new()
-            .push(Text::new("Search Orders"))
+            .push(Text::new("Search Screen"))
             .into()
     }
 }

@@ -1,4 +1,5 @@
-use iced::{Column, Element, Sandbox, Text};
+use iced::widget::{Column, Text};
+use iced::{Element, Sandbox};
 
 pub struct Reports;
 
@@ -17,7 +18,7 @@ impl Sandbox for Reports {
 
     fn view(&self) -> Element<Self::Message> {
         Column::new()
-            .push(Text::new("Reports & Analytics"))
+            .push(Text::new("Reports Screen"))
             .into()
     }
 }

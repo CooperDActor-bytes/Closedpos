@@ -1,4 +1,5 @@
-use iced::{Column, Element, Sandbox, Text};
+use iced::widget::{Column, Text};
+use iced::{Element, Sandbox};
 
 pub struct Inventory;
 
@@ -17,7 +18,7 @@ impl Sandbox for Inventory {
 
     fn view(&self) -> Element<Self::Message> {
         Column::new()
-            .push(Text::new("Inventory Management"))
+            .push(Text::new("Inventory Management Screen"))
             .into()
     }
 }

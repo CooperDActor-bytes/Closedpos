@@ -1,4 +1,5 @@
-use iced::{Column, Element, Sandbox, Text};
+use iced::widget::{Column, Text};
+use iced::{Element, Sandbox};
 
 pub struct Settings;
 
@@ -17,7 +18,7 @@ impl Sandbox for Settings {
 
     fn view(&self) -> Element<Self::Message> {
         Column::new()
-            .push(Text::new("Settings"))
+            .push(Text::new("Settings Screen"))
             .into()
     }
 }
