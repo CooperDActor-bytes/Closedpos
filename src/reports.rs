@@ -1,4 +1,4 @@
-use iced::{Element, Sandbox, Text};
+use iced::{Column, Element, Sandbox, Text};
 
 pub struct Reports;
 
@@ -10,12 +10,14 @@ impl Sandbox for Reports {
     }
 
     fn title(&self) -> String {
-        "Reports".to_string()
+        String::from("Reports")
     }
 
     fn update(&mut self, _message: Self::Message) {}
 
     fn view(&self) -> Element<Self::Message> {
-        Text::new("This is the Reports View").into()
+        Column::new()
+            .push(Text::new("Reports & Analytics"))
+            .into()
     }
 }

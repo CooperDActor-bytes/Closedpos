@@ -1,21 +1,23 @@
-use iced::{Element, Sandbox, Text};
+use iced::{Column, Element, Sandbox, Text};
 
-pub struct SearchOrders;
+pub struct Search;
 
-impl Sandbox for SearchOrders {
+impl Sandbox for Search {
     type Message = ();
 
     fn new() -> Self {
-        SearchOrders
+        Search
     }
 
     fn title(&self) -> String {
-        "Search Orders".to_string()
+        String::from("Search Orders")
     }
 
     fn update(&mut self, _message: Self::Message) {}
 
     fn view(&self) -> Element<Self::Message> {
-        Text::new("This is the Search Orders View").into()
+        Column::new()
+            .push(Text::new("Search Orders"))
+            .into()
     }
 }

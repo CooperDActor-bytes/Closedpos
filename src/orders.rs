@@ -1,23 +1,23 @@
 use iced::{Column, Element, Sandbox, Text};
 
-pub struct Settings;
+pub struct Orders;
 
-impl Sandbox for Settings {
+impl Sandbox for Orders {
     type Message = ();
 
     fn new() -> Self {
-        Settings
+        Orders
     }
 
     fn title(&self) -> String {
-        String::from("Settings")
+        String::from("Orders")
     }
 
     fn update(&mut self, _message: Self::Message) {}
 
     fn view(&self) -> Element<Self::Message> {
         Column::new()
-            .push(Text::new("Settings"))
+            .push(Text::new("Order Management"))
             .into()
     }
 }
